@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        ////////////////////////callback//////////////////////
+
+
+
+// var new Date() = new Date();
+
+// const detail=[{title:"this is one",body:"this is body one",createdAt:`Post created ${new Date().getTime()}seconds ago `},
+// {title:"this is two",body:"this is body two",createdAt:`Post created ${new Date().getTime()}seconds ago `}];
+
+// let timestore=0;
+// function getime()
+// {
+//     clearInterval(timestore);
+//   timestore=setInterval(() => {
+//         let output='';
+        
+//             detail.forEach((post,index)=>{
+//                 output+=`<li>${post.title}-last update ${new Date().getTime()} ${post.createdAt}</li>`;
+//             })
+//         ;
+//         document.body.innerHTML=output;
+//     }, 1000);
+// }
+
+// function addnew(post,callback)
+// {
+//     setTimeout(() => {
+//         detail.push({...post,createdAt:`Post created ${new Date().getTime()}seconds ago `});
+//         getime();
+//     }, 2000);
+// }
+
+// function Post_Four(post,callback)
+// {
+//     setTimeout(() => {
+//         detail.push({...post,createdAt:`Post created ${new Date().getTime()}seconds ago `});
+//         getime();
+//     }, 5000);
+
+// }
+
+// getime();
+
+// addnew({title:"this is three",body:"this is body three"},getime);
+
+// Post_Four({title:"this is four",body:"this is body four"},getime);
+
+
+
+
+///////////////////promise//////////////////
+
+// const data=[{title:"this is one",body:"this is body of one"},
+//             {title:"this is two",body:"this is body of two"}]
+
+
+// function getpost()
+// {
+//     output='';
+//     setTimeout(() => {
+//         data.forEach((post,index) => {
+//             output+=`<li>${post.title}</li>`; 
+//         });
+//         document.body.innerHTML=output;
+//     }, 1000);
+    
+// }
+
+// //getpost();
+
+// function post3rd(post)
+// {
+//     return new Promise((resolve,reject)=>{
+//         setTimeout(() => {
+//             data.push(post);
+//             const error=false;
+//             if(!error)
+//             {
+//                 resolve();
+//             }
+//             else
+//             {
+//                 reject("somewent wrong");
+//             }
+
+//         }, 1000);
+//     })
+// }
+
+
+// function deletepost()
+// {
+//    // clearInterval(timereferesh);
+//    return new Promise((resolve,reject)=>{
+//         setTimeout(() => {
+            
+//             // data.pop();
+//             // const error=false;
+//             if(data.length>0)
+//             {
+//                 const laststate=data.pop();
+//                 resolve(laststate);
+//             }
+//             else
+//             {
+//                 reject("array in now empty");
+//             }
+//         }, 1000);
+//     })
+// }
+
+// post3rd({title:"this is third",body:"this is third boyd"}).then(()=>{
+//     getpost()
+//     deletepost().then((deletdata)=>{
+//         console.log(deletdata)
+//         getpost();
+//         deletepost().then(()=>{
+//             getpost();
+//             deletepost().then(()=>{
+//                 getpost();
+//                 deletepost().then(()=>{})
+//                 .catch((err)=>{
+//                     console.log("inside catch block",err)
+//                 })
+//             })
+//         })
+//     })
+// })
+// .catch(err=>console.log(err));
+
+// post3rd({title:"this is forth_post",body:"this is forth_post_body"}).then(()=>{
+//     getpost()
+//     deletepost().then(()=>{})
+//     .catch((err)=>{
+//         console.log("inside catch block",err);
+//     })
+// }).catch(err=>console.log(err));
+
+
+
+
+////promise alll///
+
+// const promise1=Promise.resolve('hello world');
+// const promise2=10;
+// const promise3=new Promise((resolve,reject)=>
+// setTimeout(resolve,2000,'gooodbye'));
+
+// Promise.all([promise1,promise2,promise3]).then(values=>console.log(values));
+
+
+
+
+let posts=[{title:"ajay",createdDate:new Date().getTime()},
+         {title:"sanampuri",createdDate:new Date().getTime}];
+
+
+
+
+let intervalId = 0;
+
+function getPosts(){
+    clearInterval(intervalId);
+    intervalId =  setInterval(() => {
+        let output = '';
+        posts.forEach((post)=>{
+            let createdDate = new Date(post.createdAt);
+            output+=`<li>${post.title} ----- Created At: ${createdDate.getHours()}:${createdDate.getMinutes()}:${createdDate.getSeconds()} ----- Last updated: ${Math.trunc((new Date().getTime() - post.createdAt)/1000)} seconds ago ----- Last Activity: ${post.lastActivityTime}</li>`;
+        });
+        document.body.innerHTML = output;   
+    },1000);
+
+}
+
+
+
+
+function createPost(post){
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            posts.push({...post,createdAt : new Date().getTime()});
+            updateLstActivityTime();
+            console.log(posts);
+
+            const error = false;
+            if(!error){
+                resolve();
+            }else{
+                reject(`Error: Something went wrong.`);
+            }
+        },2000);
+    });
+}
+
+
+function updateLstActivityTime(){
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            posts.forEach((post) => {post.lastActivityTime = new Date().toLocaleDateString();});
+            resolve();
+        },1000);
+    });
+}
+
+
+function deletePost(){
+    return new Promise((resolve,reject) => {
+        setTimeout(() => {
+            if(posts.length>0){
+                resolve(posts.pop());
+            }else{
+                reject(`Array is empty.`);
+            }
+        },5000);
+    });
+}
+
+
+Promise.all([createPost({title : 'Post 3',body : 'This is post Three.'}),updateLstActivityTime()])
+    .then(()=>getPosts())
+    .then(() => {
+        deletePost().then(() => {
+            console.log(posts)
+        })
+    });
+
+    </script>
+</body>
+</html>
